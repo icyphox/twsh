@@ -1,2 +1,2 @@
 # twsh
-> a [twtxt](/buckket/twtxt) client written in bash
+> a [twtxt](https://github.com/buckket/twtxt) client written in bash
