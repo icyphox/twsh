@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # twsh - a twtxt client written in bash
 # (c) 2019 by Anirudh Oppiliappan (@icyphox) <x@icyphox.sh>
+#         and Akshay Oppiliappan (@nerdypepper) <nerdypepper@tuta.io>
 
 function tweet() {
 	text="$1"
-	date=$(date +%FT%T%:z)
-	tweet="$date   $text"
-	echo "$tweet" >> $TWTXT_FILE
+	date=$(date -Im)
+	tweet="$date\t$text"
+	echo -e "$tweet" >> $TWTXT_FILE
 }
 
 function create_twtxt() {
@@ -30,24 +31,25 @@ function create_twtxt() {
 	fi
 }
 
-function help() {
-	echo "twsh - a twtxt client"
-	echo "(c) Anirudh Oppiliappan (@icyphox) <x@icyphox.sh>"
-	echo 
-	echo "usage: twsh [options]"
-	echo ""
+function help_text () {
+cat << EOF
+Usage: twsh [options]
+EOF
 }
 
-
-if [ "$1" == "tweet" ]
-then
-	tweet "$2" 
-elif [ "$1" == "init" ]
-then
-	create_twtxt "$2"
-elif [ "$#" -eq 0 ] || [ "$1" == "help"  ]
-then
-	help
-else
-	echo "error: unknown argument"
-fi
+while getopts :i:ht: options
+do
+    case $options in
+        i) 
+            # init
+            create_twtxt "$OPTARG"
+            ;;
+        t)
+            # tweet
+            tweet "$OPTARG"
+            ;;
+        h|?)
+            help_text
+            ;;
+    esac
+done
