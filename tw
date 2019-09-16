@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# twsh - a twtxt client written in bash
+# (c) 2019 by Anirudh Oppiliappan (@icyphox) <x@icyphox.sh>
+
+function tweet() {
+	text="$1"
+	date=$(date +%FT%T%:z)
+	tweet="$date   $text"
+	echo "$tweet" >> $TWTXT_FILE
+}
+
+function create_twtxt() {
+	if [ "$1" == "" ]
+	then
+		echo "error: requires a path"
+		exit
+	fi
+	path="$1/twtxt.txt"
+	if [ -f "$path" ]
+	then
+		read -p "twsh: $path exists, overwrite? [y/n]: " yn
+		case $yn in
+			[Yy]* ) rm "$path" && touch "$1";;
+			[Nn]* ) exit;;
+			* ) echo "twsh: enter yes or no"
+		esac
+	else
+		touch "$path"
+		echo "twsh: created $path"
+	fi
+}
+
+function help() {
+	echo "twsh - a twtxt client"
+	echo "(c) Anirudh Oppiliappan (@icyphox) <x@icyphox.sh>"
+	echo 
+	echo "usage: twsh [options]"
+	echo ""
+}
+
+
+if [ "$1" == "tweet" ]
+then
+	tweet "$2" 
+elif [ "$1" == "init" ]
+then
+	create_twtxt "$2"
+elif [ "$#" -eq 0 ] || [ "$1" == "help"  ]
+then
+	help
+else
+	echo "error: unknown argument"
+fi
