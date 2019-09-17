@@ -22,25 +22,26 @@ function tweet() {
 
 function create_twtxt() {
     mkdir -p "$DATA_DIR"
-    twtxt="$DATA_DIR/twtxt"
 
-	if [ -f "$twtxt" ]
+	if [ -f "$TWTXT_FILE" ]
 	then
 		read -p "twsh: $twtxt exists, overwrite? [y/n]: " yn
 		case $yn in
-			[Yy]* ) rm "$twtxt" && touch "$1";;
-			[Nn]* ) exit;;
+			[Yy]* ) >$TWTXT_FILE ;;
+			[Nn]* ) exit ;;
 			* ) echo "twsh: enter yes or no"
 		esac
 	else
-		touch "$twtxt"
-		echo "twsh: created $twtxt"
+		touch "$TWTXT_FILE"
+		echo "twsh: created $TWTXT_FILE"
 	fi
 }
 
 function help_text () {
 cat << EOF
 Usage: twsh [options]
+    -i  init twtxt
+    -t
 EOF
 }
 
@@ -51,12 +52,12 @@ do
             # init
             create_twtxt
             ;;
-        t)
+        h)
+            help_text
+            ;;
+        t|?)
             # tweet
             tweet "$OPTARG"
-            ;;
-        h|?)
-            help_text
             ;;
     esac
 done
