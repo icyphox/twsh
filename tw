@@ -18,12 +18,12 @@ CONFIG="$CONFIG_DIR/twshrc"
 # sourcing our config
 if [[ -f "$CONFIG" ]]
 then
-	source "$CONFIG"
-	if [[ "$TWTXT_FILE" == "" ]]
-	then
-		echo "twsh: unable to source config"
-		exit
-	fi
+    source "$CONFIG"
+    if [[ "$TWTXT_FILE" == "" ]]
+    then
+        echo "twsh: unable to source config"
+        exit
+    fi
 fi
 
 function create_config() {
@@ -33,35 +33,35 @@ function create_config() {
     cat << EOF > "$CONFIG"
 TWTXT_FILE="$twtxt_path/twtxt.txt"
 EOF
-    echo "twsh: created config at $CONFIG"
-    source "$CONFIG"
+echo "twsh: created config at $CONFIG"
+source "$CONFIG"
 }
 
 function create_twtxt() {
-	if [[ -f "$TWTXT_FILE" ]]
-	then
-		read -p "twsh: $TWTXT_FILE exists, overwrite? [y/n]: " yn
-		case $yn in
-			[Yy]* ) >$TWTXT_FILE ;;
-			[Nn]* ) exit ;;
-			* ) echo "twsh: enter yes or no"
-		esac
-	else
-		touch "$TWTXT_FILE"
-		echo "twsh: created $TWTXT_FILE"
-	fi
+    if [[ -f "$TWTXT_FILE" ]]
+    then
+        read -p "twsh: $TWTXT_FILE exists, overwrite? [y/n]: " yn
+        case $yn in
+            [Yy]* ) >$TWTXT_FILE ;;
+            [Nn]* ) exit ;;
+            * ) echo "twsh: enter yes or no"
+        esac
+    else
+        touch "$TWTXT_FILE"
+        echo "twsh: created $TWTXT_FILE"
+    fi
 }
 
 function tweet() {
-	text="$1"
-	date=$(date -Im)
-	tweet="$date\t$text"
-	echo -e "$tweet" >> "$TWTXT_FILE"
+    text="$1"
+    date=$(date -Im)
+    tweet="$date\t$text"
+    echo -e "$tweet" >> "$TWTXT_FILE"
 }
 
 
 function help_text () {
-cat << EOF
+    cat << EOF
 usage: twsh [options]
   -i [path]       create twtxt.txt file
   -t [text]       append tweet to twtxt.txt file
@@ -74,7 +74,7 @@ do
     case $options in
         i) 
             # init
-			create_config "$2"
+            create_config "$2"
             create_twtxt "$2"
             ;;
         h)
@@ -84,7 +84,7 @@ do
             # tweet
             tweet "$OPTARG"
             ;;
-		h|*)
+        h|*)
             help_text
             ;;
     esac
