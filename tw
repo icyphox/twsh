@@ -3,11 +3,21 @@
 # (c) 2019 by Anirudh Oppiliappan (@icyphox) <x@icyphox.sh>
 #         and Akshay Oppiliappan (@nerdypepper) <nerdypepper@tuta.io>
 
+DATA_DIR="$HOME"
+
+if [[ "$OSTYPE" = "linux-gnu" ]]; then
+    DATA_DIR="$HOME/.local/share/twsh"
+elif [[ "$OSTYPE" = "darwin" ]]; then
+    DATA_DIR="$HOME/Library/ApplicationSupport/com.icyphox.twsh"
+fi
+
+TWTXT_FILE="$DATA_DIR/twtxt"
+
 function tweet() {
 	text="$1"
 	date=$(date -Im)
 	tweet="$date\t$text"
-	echo -e "$tweet" >> $TWTXT_FILE
+	echo -e "$tweet" >> "$TWTXT_FILE"
 }
 
 function create_twtxt() {
