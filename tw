@@ -3,6 +3,8 @@
 # (c) 2019 by Anirudh Oppiliappan (@icyphox) <x@icyphox.sh>
 #         and Akshay Oppiliappan (@nerdypepper) <nerdypepper@tuta.io>
 
+
+# uses default as $HOME
 DATA_DIR="$HOME"
 
 if [[ "$OSTYPE" = "linux-gnu" ]]; then
@@ -11,7 +13,31 @@ elif [[ "$OSTYPE" = "darwin" ]]; then
     DATA_DIR="$HOME/Library/ApplicationSupport/com.icyphox.twsh"
 fi
 
-TWTXT_FILE="$DATA_DIR/twtxt"
+CONFIG="$DATA_DIR/twshrc"
+
+# sourcing our config
+if [[ -f "$CONFIG" ]]
+then
+	source "$CONFIG"
+	if [[ "$TWTXT_FILE" == "" ]]
+	then
+		echo "twsh: unable to source config"
+		exit
+	fi
+fi
+
+
+function create_config() {
+	mkdir -p "$DATA_DIR"
+	touch "$CONFIG"
+	twtxt_path=$(readlink -f "$1")
+cat << EOF > "$CONFIG"	
+#!/usr/bin/env bash
+TWTXT_FILE="$twtxt_path/twtxt.txt"
+EOF
+
+echo "twsh: created config at $CONFIG"
+}
 
 function tweet() {
 	text="$1"
@@ -21,8 +47,13 @@ function tweet() {
 }
 
 function create_twtxt() {
-    mkdir -p "$DATA_DIR"
-    twtxt="$DATA_DIR/twtxt"
+	if [ "$1" == "" ]
+	then
+		help_text
+		exit
+	else
+		twtxt="$1/twtxt.txt"
+	fi
 
 	if [ -f "$twtxt" ]
 	then
@@ -40,7 +71,10 @@ function create_twtxt() {
 
 function help_text () {
 cat << EOF
-Usage: twsh [options]
+usage: twsh [options]
+  -i [path]       create twtxt.txt file
+  -t [text]       append tweet to twtxt.txt file
+  -h              show this help text
 EOF
 }
 
@@ -49,13 +83,14 @@ do
     case $options in
         i) 
             # init
-            create_twtxt
+            create_twtxt "$2"
+			create_config "$2"
             ;;
         t)
             # tweet
             tweet "$OPTARG"
             ;;
-        h|?)
+		h|*)
             help_text
             ;;
     esac
