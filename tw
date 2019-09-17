@@ -5,15 +5,15 @@
 
 
 # uses default as $HOME
-DATA_DIR="$HOME"
+CONFIG_DIR="$HOME"
 
 if [[ "$OSTYPE" = "linux-gnu" ]]; then
-    DATA_DIR="$HOME/.local/share/twsh"
+    CONFIG_DIR="$HOME/.config/twsh"
 elif [[ "$OSTYPE" = "darwin" ]]; then
-    DATA_DIR="$HOME/Library/ApplicationSupport/com.icyphox.twsh"
+    CONFIG_DIR="$HOME/Library/Preferences/com.icyphox.twsh"
 fi
 
-CONFIG="$DATA_DIR/twshrc"
+CONFIG="$CONFIG_DIR/twshrc"
 
 # sourcing our config
 if [[ -f "$CONFIG" ]]
@@ -26,32 +26,21 @@ then
 	fi
 fi
 
-
 function create_config() {
-	mkdir -p "$DATA_DIR"
-	touch "$CONFIG"
-	twtxt_path=$(readlink -f "$1")
-cat << EOF > "$CONFIG"	
-#!/usr/bin/env bash
+    mkdir -p "$CONFIG_DIR"
+    touch "$CONFIG"
+    twtxt_path=$(readlink -f "$1")
+    cat << EOF > "$CONFIG"
 TWTXT_FILE="$twtxt_path/twtxt.txt"
 EOF
-
-echo "twsh: created config at $CONFIG"
-}
-
-function tweet() {
-	text="$1"
-	date=$(date -Im)
-	tweet="$date\t$text"
-	echo -e "$tweet" >> "$TWTXT_FILE"
+    echo "twsh: created config at $CONFIG"
+    source "$CONFIG"
 }
 
 function create_twtxt() {
-    mkdir -p "$DATA_DIR"
-
-	if [[ -f "$twtxt" ]]
+	if [[ -f "$TWTXT_FILE" ]]
 	then
-		read -p "twsh: $twtxt exists, overwrite? [y/n]: " yn
+		read -p "twsh: $TWTXT_FILE exists, overwrite? [y/n]: " yn
 		case $yn in
 			[Yy]* ) >$TWTXT_FILE ;;
 			[Nn]* ) exit ;;
@@ -62,6 +51,14 @@ function create_twtxt() {
 		echo "twsh: created $TWTXT_FILE"
 	fi
 }
+
+function tweet() {
+	text="$1"
+	date=$(date -Im)
+	tweet="$date\t$text"
+	echo -e "$tweet" >> "$TWTXT_FILE"
+}
+
 
 function help_text () {
 cat << EOF
@@ -77,8 +74,8 @@ do
     case $options in
         i) 
             # init
-            create_twtxt "$2"
 			create_config "$2"
+            create_twtxt "$2"
             ;;
         h)
             help_text
