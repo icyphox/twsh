@@ -47,7 +47,7 @@ function tweet() {
 }
 
 function create_twtxt() {
-	if [ "$1" == "" ]
+	if [[ "$1" == "" ]]
 	then
 		help_text
 		exit
@@ -55,7 +55,7 @@ function create_twtxt() {
 		twtxt="$1/twtxt.txt"
 	fi
 
-	if [ -f "$twtxt" ]
+	if [[ -f "$twtxt" ]]
 	then
 		read -p "twsh: $twtxt exists, overwrite? [y/n]: " yn
 		case $yn in
