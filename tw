@@ -21,23 +21,20 @@ function tweet() {
 }
 
 function create_twtxt() {
-	if [ "$1" == "" ]
+    mkdir -p "$DATA_DIR"
+    twtxt="$DATA_DIR/twtxt"
+
+	if [ -f "$twtxt" ]
 	then
-		echo "error: requires a path"
-		exit
-	fi
-	path="$1/twtxt.txt"
-	if [ -f "$path" ]
-	then
-		read -p "twsh: $path exists, overwrite? [y/n]: " yn
+		read -p "twsh: $twtxt exists, overwrite? [y/n]: " yn
 		case $yn in
-			[Yy]* ) rm "$path" && touch "$1";;
+			[Yy]* ) rm "$twtxt" && touch "$1";;
 			[Nn]* ) exit;;
 			* ) echo "twsh: enter yes or no"
 		esac
 	else
-		touch "$path"
-		echo "twsh: created $path"
+		touch "$twtxt"
+		echo "twsh: created $twtxt"
 	fi
 }
 
@@ -47,12 +44,12 @@ Usage: twsh [options]
 EOF
 }
 
-while getopts :i:ht: options
+while getopts :iht: options
 do
     case $options in
         i) 
             # init
-            create_twtxt "$OPTARG"
+            create_twtxt
             ;;
         t)
             # tweet
